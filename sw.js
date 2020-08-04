@@ -27,9 +27,13 @@ const cachedResponseWillBeUsed = ({ cache, request, cachedResponse }) => {
   return caches.match(request.url, { ignoreSearch: true })
 }
 
+const catchAll = ({ url, event }) => {
+  return !/OnionMath.*.(?:ttf)/.test(url.href)
+}
+
 // 对主HTML进行缓存，策略是network优先
 workbox.routing.registerRoute(
-    new RegExp('/'),
+    catchAll,
     workbox.strategies.networkFirst({
       cacheName: currentCacheNames.html,
       plugins: [
@@ -68,7 +72,8 @@ workbox.routing.registerRoute(
 
 const matchTTF = ({ url, event }) => {
   return (
-     new RegExp('.*.(?:ttf)').test(url.href) && !url.href.includes('OnionMath')
+    new RegExp('.*.(?:ttf)').test(url.href) &&
+    !/OnionMath.*.(?:ttf)/.test(url.href)
   )
 }
 
