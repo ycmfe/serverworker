@@ -68,8 +68,7 @@ workbox.routing.registerRoute(
 
 const matchTTF = ({ url, event }) => {
   return (
-    new RegExp('.*.(?:ttf)').test(url.pathname) &&
-    !url.pathname.includes('OnionMath')
+     new RegExp('.*.(?:ttf)').test(url.href) && !url.href.includes('OnionMath')
   )
 }
 
