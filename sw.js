@@ -20,12 +20,20 @@ workbox.precaching.precacheAndRoute(
   }
 );
 
+const cachedResponseWillBeUsed = ({ cache, request, cachedResponse }) => {
+  if (cachedResponse) {
+    return cachedResponse
+  }
+  return caches.match(request.url, { ignoreSearch: true })
+}
+
 // 对主HTML进行缓存，策略是network优先
 workbox.routing.registerRoute(
     new RegExp('/'),
     workbox.strategies.networkFirst({
       cacheName: currentCacheNames.html,
       plugins: [
+        { cachedResponseWillBeUsed },
         // Force Cache
         new workbox.cacheableResponse.Plugin({
           statuses: [0, 200], // One or more status codes that a Response can have and be considered cacheable.
@@ -57,9 +65,17 @@ workbox.routing.registerRoute(
         ],
     })
 );
+
+const matchTTF = ({ url, event }) => {
+  return (
+    new RegExp('.*.(?:ttf)').test(url.pathname) &&
+    !url.pathname.includes('OnionMath')
+  )
+}
+
 // 字体
 workbox.routing.registerRoute(
-  new RegExp('.*\.(?:ttf)'),
+  matchTTF,
   workbox.strategies.cacheFirst({
       cacheName: currentCacheNames.font,
       plugins: [
