@@ -27,24 +27,6 @@ const cachedResponseWillBeUsed = ({ cache, request, cachedResponse }) => {
   return caches.match(request.url, { ignoreSearch: true })
 }
 
-const catchAll = ({ url, event }) => {
-  return !/OnionMath.*.(?:ttf)/.test(url.href)
-}
-
-// 对主HTML进行缓存，策略是network优先
-workbox.routing.registerRoute(
-    catchAll,
-    workbox.strategies.networkFirst({
-      cacheName: currentCacheNames.html,
-      plugins: [
-        { cachedResponseWillBeUsed },
-        // Force Cache
-        new workbox.cacheableResponse.Plugin({
-          statuses: [0, 200], // One or more status codes that a Response can have and be considered cacheable.
-        }),
-      ]
-    }),
-);
 // 长线资源
 workbox.routing.registerRoute(
     new RegExp('https://(fp|static)\.yangcong345\.com\/middle'),
@@ -88,6 +70,25 @@ workbox.routing.registerRoute(
           }),
       ],
   })
+);
+
+const catchAll = ({ url, event }) => {
+  return !/OnionMath.*.(?:ttf)/.test(url.href)
+}
+
+// 对主HTML进行缓存，策略是network优先
+workbox.routing.registerRoute(
+    catchAll,
+    workbox.strategies.networkFirst({
+      cacheName: currentCacheNames.html,
+      plugins: [
+        { cachedResponseWillBeUsed },
+        // Force Cache
+        new workbox.cacheableResponse.Plugin({
+          statuses: [0, 200], // One or more status codes that a Response can have and be considered cacheable.
+        }),
+      ]
+    }),
 );
 
 // 添加缓存
