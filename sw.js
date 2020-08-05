@@ -41,7 +41,7 @@ workbox.routing.registerRoute(
 );
 // 业务线脚本
 workbox.routing.registerRoute(
-    new RegExp('.*\.(?:js|css|png|jpe?g)'),
+    new RegExp('.*.(?:js|css|png|jpe?g|gif)', 'i'),
     workbox.strategies.staleWhileRevalidate({
         cacheName: currentCacheNames.cdn,
         plugins: [
