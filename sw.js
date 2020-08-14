@@ -41,9 +41,14 @@ self.addEventListener('fetch', function (event) {
   console.log('fetch', url);
   event.respondWith(
     caches.match(event.request).then(function (response) {
+      if(!response){
+        return util.fetchPut(event.request.clone());
+      }
       if (!netWorkFirst({ url: url, event }) && response && response.status === 200) {
         //长缓存
-        !cacheOnly({url: url, event}) && util.fetchPut(event.request.clone())
+        if(!cacheOnly({url: url, event})){
+          util.fetchPut(event.request.clone())
+        }
         return response;
       }
       return util.fetchPut(event.request.clone());
