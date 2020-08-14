@@ -4,10 +4,10 @@ const staleWhileRevalidate = new RegExp('.*.(?:js|css|png|jpe?g|gif)', 'i');
 
 const netWorkFirst = ({ url, event }) => {
   // 网络优先的策略
-  return !/OnionMath.*.(?:ttf)/.test(url.href)
+  return !/OnionMath.*.(?:ttf)/.test(url)
 }
 const cacheOnly = ({ url, event }) => {
-  return new RegExp('https://(fp|static)\.yangcong345\.com\/middle')
+  return new RegExp('https://(fp|static)\.yangcong345\.com\/middle').test(url)
 }
 
 const util = {
@@ -43,7 +43,7 @@ self.addEventListener('fetch', function (event) {
     caches.match(event.request).then(function (response) {
       if (!netWorkFirst({ url: url, event }) && response && response.status === 200) {
         //长缓存
-        cacheOnly({url: url, event}) && util.fetchPut(event.request.clone())
+        !cacheOnly({url: url, event}) && util.fetchPut(event.request.clone())
         return response;
       }
       return util.fetchPut(event.request.clone());
